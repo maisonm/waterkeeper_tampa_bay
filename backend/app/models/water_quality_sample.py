@@ -10,7 +10,7 @@ class WaterQualitySample(Base):
     __tablename__ = "water_quality_samples"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    side_id: Mapped[int] = mapped_column(ForeignKey("sites.id"), nullable=False)
+    site_id: Mapped[int] = mapped_column(ForeignKey("sites.id"), nullable=False)
     sample_date: Mapped[date] = mapped_column(Date, nullable=False)
     enterococci_per_100ml: Mapped[int] = mapped_column(Integer, nullable=False)
     quality_code: Mapped[str] = mapped_column(String, nullable=False)

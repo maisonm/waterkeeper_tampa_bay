@@ -1,6 +1,6 @@
 from datetime import date 
 
-from sqlalchemy import Date, Float, ForeignKey, String, UniqueConstraint, null
+from sqlalchemy import Date, Float, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base 
@@ -21,5 +21,5 @@ class WeatherDailyRecord(Base):
     site = relationship('Site', back_populates="weather_records")
 
     __table_args__ = (
-        UniqueConstraint("site_id", "weather_date", name="uq_wearther_site_date"),
+        UniqueConstraint("site_id", "weather_date", name="uq_weather_site_date"),
     )

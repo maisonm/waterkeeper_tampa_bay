@@ -12,5 +12,5 @@ class Site(Base):
     longitude: Mapped[float] = mapped_column(Float, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=True)
 
-    samples = relationship("WaterQaulitySample", back_populates="site")
+    samples = relationship("WaterQualitySample", back_populates="site")
     weather_records = relationship("WeatherDailyRecord", back_populates="site")

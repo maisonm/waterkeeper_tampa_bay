@@ -65,6 +65,12 @@ def insert_samples(db, rows: list[dict], site_map: dict[str, int]) -> int:
             logger.warning(f"Site not found for {row['name']}")
             continue
 
+        raw_count = row["enterococci_per_100ml"]
+        if str(raw_count).strip() in ("-", "", "N/A", "n/a", "nan"):
+            logger.warning(f"Skipping row for {row['name']} on {row['sample_date']} — no enterococci value")
+            continue
+        
+
         records.append({
             "site_id": site_id,
             "sample_date": row["sample_date"],
@@ -77,24 +83,38 @@ def insert_samples(db, rows: list[dict], site_map: dict[str, int]) -> int:
         logger.info("No new samples to insert.")
         return 0
 
-    # On conflict, only update if the source hash is different
-    # This could be due to minor updates to inaccuracies in the reported water sample and quality code
-    stmt = (
-        insert(WaterQualitySample)
-        .values(records)
-        .on_conflict_do_update(
-            index_elements=["site_id", "sample_date"],
-            set_={
-                "enterococci_per_100ml": insert(WaterQualitySample).excluded.enterococci_per_100ml,
-                "quality_code": insert(WaterQualitySample).excluded.quality_code,
-                "source_hash": insert(WaterQualitySample).excluded.source_hash,
-            },
-            where=WaterQualitySample.source_hash != insert(WaterQualitySample).excluded.source_hash,
+    # Deduplicate by (site_id, sample_date) — keep last occurrence in case the
+    # sheet has repeated rows for the same site/date
+    seen: dict[tuple, dict] = {}
+    for record in records:
+        key = (record["site_id"], record["sample_date"])
+        seen[key] = record
+    records = list(seen.values())
+    logger.info(f"After deduplication: {len(records)} unique records to process.")
+
+    BATCH_SIZE = 500
+    total_inserted = 0
+
+    for i in range(0, len(records), BATCH_SIZE):
+        batch = records[i : i + BATCH_SIZE]
+        stmt = (
+            insert(WaterQualitySample)
+            .values(batch)
+            .on_conflict_do_update(
+                index_elements=["site_id", "sample_date"],
+                set_={
+                    "enterococci_per_100ml": insert(WaterQualitySample).excluded.enterococci_per_100ml,
+                    "quality_code": insert(WaterQualitySample).excluded.quality_code,
+                    "source_hash": insert(WaterQualitySample).excluded.source_hash,
+                },
+                where=WaterQualitySample.source_hash != insert(WaterQualitySample).excluded.source_hash,
+            )
         )
-    )
-    
-    result = db.execute(stmt)
-    return result.rowcount   
+        result = db.execute(stmt)
+        total_inserted += result.rowcount
+        logger.info(f"Inserted batch {i // BATCH_SIZE + 1}: {result.rowcount} rows")
+
+    return total_inserted   
 
 
 def run_sync():

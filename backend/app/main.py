@@ -7,7 +7,7 @@ from asyncio import create_task
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import sites, weather_records
+from app.api.routes import sites, weather_records, dashboard
 from app.jobs.sync_samples import run_sync
 from app.jobs.sync_weather import run_weather_sync
 
@@ -43,6 +43,7 @@ app.add_middleware(
 
 app.include_router(sites.router, prefix="/api")
 app.include_router(weather_records.router, prefix="/api")
+app.include_router(dashboard.router, prefix="/api")
 
 @app.get("/")
 def root():

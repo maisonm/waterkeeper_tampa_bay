@@ -1,6 +1,6 @@
 from datetime import date
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -15,15 +15,19 @@ from app.exceptions.exceptions import SiteNotFoundError
 
 router = APIRouter(prefix="/sites", tags=["Sites"])
 
+_CACHE_HEADER = "public, max-age=3600, stale-while-revalidate=600"
+
 
 @router.get("/", response_model=list[SiteResponse])
-async def get_sites(db: AsyncSession = Depends(get_db)):
+async def get_sites(response: Response, db: AsyncSession = Depends(get_db)):
+    response.headers["Cache-Control"] = _CACHE_HEADER
     result = await db.execute(select(Site).order_by(Site.name))
     return result.scalars().all()
 
 
 @router.get("/{site_id}", response_model=SiteDetailResponse)
-async def get_site(site_id: int, db: AsyncSession = Depends(get_db)):
+async def get_site(site_id: int, response: Response, db: AsyncSession = Depends(get_db)):
+    response.headers["Cache-Control"] = _CACHE_HEADER
     result = await db.execute(select(Site).filter(Site.id == site_id))
     site = result.scalar_one_or_none()
 
@@ -36,11 +40,13 @@ async def get_site(site_id: int, db: AsyncSession = Depends(get_db)):
 @router.get("/{site_id}/samples", response_model=list[WaterQualitySampleResponse])
 async def get_site_samples(
     site_id: int,
+    response: Response,
     start_date: date | None = Query(default=None),
     end_date: date | None = Query(default=None),
     quality_code: str | None = Query(default=None),
     db: AsyncSession = Depends(get_db),
 ):
+    response.headers["Cache-Control"] = _CACHE_HEADER
     try:
         return await get_samples_for_site(db, site_id, start_date, end_date, quality_code)
     except SiteNotFoundError:

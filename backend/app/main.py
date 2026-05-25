@@ -3,12 +3,13 @@ import logging
 from contextlib import asynccontextmanager
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from asyncio import create_task, to_thread
+from asyncio import create_task
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import sites, weather_records
 from app.jobs.sync_samples import run_sync
+from app.jobs.sync_weather import run_weather_sync
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -17,10 +18,13 @@ scheduler = AsyncIOScheduler()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Running initial sync on startup...")
-    create_task(to_thread(run_sync))
+    create_task(run_sync())
+    create_task(run_weather_sync())
 
     scheduler.add_job(run_sync, "cron", day_of_week="mon", hour=7, minute=0)
     scheduler.add_job(run_sync, "cron", day_of_week="fri", hour=7, minute=0)
+    scheduler.add_job(run_weather_sync, "cron", day_of_week="mon", hour=7, minute=30)
+    scheduler.add_job(run_weather_sync, "cron", day_of_week="fri", hour=7, minute=30)
     scheduler.start()
 
     yield

@@ -3,8 +3,8 @@ import logging
 import os
 
 from dotenv import load_dotenv
+from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
-
 
 from app.core.database import SessionLocal
 from app.models.site import Site
@@ -20,8 +20,8 @@ SHEET_URL = (
     f"{os.getenv('SPREADSHEET_ID')}/export?format=csv&gid={os.getenv('SHEET_GID')}"
 )
 
-def upsert_sites(db, rows: list[dict]) -> dict[str, int]:
 
+async def upsert_sites(db, rows: list[dict]) -> dict[str, int]:
     unique_sites: dict[str, dict] = {}
     for row in rows:
         name = row["name"]
@@ -34,7 +34,8 @@ def upsert_sites(db, rows: list[dict]) -> dict[str, int]:
     site_map: dict[str, int] = {}
 
     for name, coords in unique_sites.items():
-        site = db.query(Site).filter(Site.name == name).first()
+        result = await db.execute(select(Site).filter(Site.name == name))
+        site = result.scalar_one_or_none()
 
         if site is None:
             site = Site(
@@ -44,11 +45,11 @@ def upsert_sites(db, rows: list[dict]) -> dict[str, int]:
                 is_active=True,
             )
             db.add(site)
-            db.flush()
+            await db.flush()
             logger.info(f"Created new site: {name}")
 
         site_map[name] = site.id
-    
+
     return site_map
 
 
@@ -57,7 +58,7 @@ def build_source_hash(site_id: int, sample_date, enterococci: int, quality_code:
     return hashlib.sha256(raw.encode()).hexdigest()
 
 
-def insert_samples(db, rows: list[dict], site_map: dict[str, int]) -> int:
+async def insert_samples(db, rows: list[dict], site_map: dict[str, int]) -> int:
     records = []
     for row in rows:
         site_id = site_map.get(row["name"])
@@ -69,7 +70,6 @@ def insert_samples(db, rows: list[dict], site_map: dict[str, int]) -> int:
         if str(raw_count).strip() in ("-", "", "N/A", "n/a", "nan"):
             logger.warning(f"Skipping row for {row['name']} on {row['sample_date']} — no enterococci value")
             continue
-        
 
         records.append({
             "site_id": site_id,
@@ -110,30 +110,27 @@ def insert_samples(db, rows: list[dict], site_map: dict[str, int]) -> int:
                 where=WaterQualitySample.source_hash != insert(WaterQualitySample).excluded.source_hash,
             )
         )
-        result = db.execute(stmt)
+        result = await db.execute(stmt)
         total_inserted += result.rowcount
         logger.info(f"Inserted batch {i // BATCH_SIZE + 1}: {result.rowcount} rows")
 
-    return total_inserted   
+    return total_inserted
 
 
 async def run_sync():
     logger.info("Starting water quality sample sync...")
-    db = SessionLocal()
+    async with SessionLocal() as db:
+        try:
+            rows = get_sheet_data(SHEET_URL)
+            logger.info(f"Fetched {len(rows)} rows from spreadsheet.")
 
-    try:
-        rows = get_sheet_data(SHEET_URL)
-        logger.info(f"Fetched {len(rows)} rows from spreadsheet.")
+            site_map = await upsert_sites(db, rows)
+            inserted = await insert_samples(db, rows, site_map)
 
-        site_map = upsert_sites(db, rows)
-        inserted = insert_samples(db, rows, site_map)
+            await db.commit()
+            logger.info(f"Sync completed. {inserted} new samples inserted. Skipped {len(rows) - inserted} duplicates.")
 
-        await db.commit()
-        logger.info(f"Sync completed. {inserted} new samples inserted. Skipped {len(rows) - inserted} duplicates.")
-
-    except Exception as e:
-        await db.rollback()
-        logger.error(f"Error during sync: {e}")
-        raise    
-    finally:
-        await db.close()
+        except Exception as e:
+            await db.rollback()
+            logger.error(f"Error during sync: {e}")
+            raise

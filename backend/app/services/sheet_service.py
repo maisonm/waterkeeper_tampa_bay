@@ -21,7 +21,7 @@ def parse_rows(sheet: pd.DataFrame):
                 "name": row["sample_site"],
                 "latitude": row["latitude"],
                 "longitude": row["longitude"],
-                "sample_date": row["date"],
+                "sample_date": pd.Timestamp(str(row["date"])).date(),
                 "enterococci_per_100ml": row["enterococci_per_100ml"],
                 "quality_code": row["enterococcus_code"],
             }

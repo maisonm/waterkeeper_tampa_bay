@@ -70,9 +70,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(sites.router, prefix="/api")
-app.include_router(weather_records.router, prefix="/api")
-app.include_router(dashboard.router, prefix="/api")
+API_V1 = "/api/v1"
+
+app.include_router(sites.router, prefix=API_V1)
+app.include_router(weather_records.router, prefix=API_V1)
+app.include_router(dashboard.router, prefix=API_V1)
 
 
 @app.exception_handler(SiteNotFoundError)

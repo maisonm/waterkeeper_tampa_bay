@@ -2,6 +2,7 @@ import logging
 
 from contextlib import asynccontextmanager
 
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from asyncio import create_task
 from fastapi import FastAPI, Request
@@ -9,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.api.routes import sites, weather_records, dashboard
+from app.core.database import SYNC_DATABASE_URL
 from app.core.logging import configure_logging
 from app.exceptions.exceptions import SiteNotFoundError
 from app.jobs.sync_samples import run_sync
@@ -16,7 +18,11 @@ from app.jobs.sync_weather import run_weather_sync
 
 configure_logging()
 logger = logging.getLogger(__name__)
-scheduler = AsyncIOScheduler()
+
+scheduler = AsyncIOScheduler(
+    jobstores={"default": SQLAlchemyJobStore(url=SYNC_DATABASE_URL)},
+    job_defaults={"coalesce": True, "max_instances": 1},
+)
 
 
 @asynccontextmanager

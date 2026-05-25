@@ -4,16 +4,20 @@ from contextlib import asynccontextmanager
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from asyncio import create_task
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.api.routes import sites, weather_records, dashboard
+from app.core.logging import configure_logging
+from app.exceptions.exceptions import SiteNotFoundError
 from app.jobs.sync_samples import run_sync
 from app.jobs.sync_weather import run_weather_sync
 
+configure_logging()
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
 scheduler = AsyncIOScheduler()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -45,6 +49,26 @@ app.include_router(sites.router, prefix="/api")
 app.include_router(weather_records.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
 
+
+@app.exception_handler(SiteNotFoundError)
+async def site_not_found_handler(request: Request, exc: SiteNotFoundError) -> JSONResponse:
+    return JSONResponse(status_code=404, content={"detail": str(exc)})
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    logger.error("Unhandled exception on %s %s", request.method, request.url.path, exc_info=exc)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "An unexpected error occurred. Please try again later."},
+    )
+
+
+@app.get("/health", tags=["Health"])
+async def health() -> dict:
+    return {"status": "ok"}
+
+
 @app.get("/")
-def root():
+def root() -> dict:
     return {"message": "Welcome to the Tampa Bay Water Quality API"}

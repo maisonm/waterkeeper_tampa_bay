@@ -2,11 +2,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.weather_daily_record import WeatherDailyRecord
-from app.models.site import Site
-from app.exceptions.exceptions import SiteNotFoundError
 
 
-async def get_weather_for_site(
+
+async def get_weather_record(
     db: AsyncSession,
     start_date=None,
     end_date=None,

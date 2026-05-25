@@ -8,9 +8,8 @@ from app.api.deps import get_db
 from app.models.site import Site
 from app.schemas.site import SiteResponse, SiteDetailResponse
 from app.schemas.water_quality_sample import WaterQualitySampleResponse
-from app.schemas.weather_daily_record import WeatherDailyRecordResponse
+
 from app.services.sample_service import get_samples_for_site
-from app.services.weather_service import get_weather_for_site
 from app.exceptions.exceptions import SiteNotFoundError
 
 
@@ -47,15 +46,3 @@ async def get_site_samples(
     except SiteNotFoundError:
         raise HTTPException(status_code=404, detail="Site not found")
 
-
-@router.get("/{site_id}/weather", response_model=list[WeatherDailyRecordResponse])
-async def get_site_weather(
-    site_id: int,
-    start_date: date | None = Query(default=None),
-    end_date: date | None = Query(default=None),
-    db: AsyncSession = Depends(get_db),
-):
-    try:
-        return await get_weather_for_site(db, site_id, start_date, end_date)
-    except SiteNotFoundError:
-        raise HTTPException(status_code=404, detail="Site not found")

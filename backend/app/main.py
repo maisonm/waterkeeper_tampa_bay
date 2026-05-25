@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
 
-from app.api.routes import sites
+from app.api.routes import sites, weather_records
 from app.jobs.sync_samples import run_sync
 
 logger = logging.getLogger(__name__)
@@ -28,6 +28,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Tampa Bay Water Quality API", lifespan=lifespan)
 
 app.include_router(sites.router, prefix="/api")
+app.include_router(weather_records.router, prefix="/api")
 
 @app.get("/")
 def root():

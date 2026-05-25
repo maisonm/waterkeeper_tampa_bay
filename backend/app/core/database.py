@@ -9,10 +9,17 @@ load_dotenv()
 
 DATABASE_URL = (
     f"postgresql+asyncpg://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}"
-    f"@localhost:5432/{os.getenv('POSTGRES_DB')}"
+    f"@{os.getenv('DB_HOST', 'localhost')}:5432/{os.getenv('POSTGRES_DB')}"
 )
 
-engine = create_async_engine(DATABASE_URL)
+engine = create_async_engine(
+    DATABASE_URL,
+    pool_size=20,
+    max_overflow=40,
+    pool_timeout=30,
+    pool_recycle=1800,
+    pool_pre_ping=True,
+)
 
 SessionLocal = async_sessionmaker[AsyncSession](engine, class_=AsyncSession, expire_on_commit=False)
 

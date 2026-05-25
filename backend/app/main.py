@@ -14,7 +14,7 @@ scheduler = AsyncIOScheduler()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Running initial sync on startup...")
-    run_sync()
+    await run_sync()
 
     scheduler.add_job(run_sync, "cron", day_of_week="mon", hour=7, minute=0)
     scheduler.add_job(run_sync, "cron", day_of_week="fri", hour=7, minute=0)

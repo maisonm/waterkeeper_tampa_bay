@@ -117,7 +117,7 @@ def insert_samples(db, rows: list[dict], site_map: dict[str, int]) -> int:
     return total_inserted   
 
 
-def run_sync():
+async def run_sync():
     logger.info("Starting water quality sample sync...")
     db = SessionLocal()
 
@@ -128,12 +128,12 @@ def run_sync():
         site_map = upsert_sites(db, rows)
         inserted = insert_samples(db, rows, site_map)
 
-        db.commit()
+        await db.commit()
         logger.info(f"Sync completed. {inserted} new samples inserted. Skipped {len(rows) - inserted} duplicates.")
 
     except Exception as e:
-        db.rollback()
+        await db.rollback()
         logger.error(f"Error during sync: {e}")
         raise    
     finally:
-        db.close()
+        await db.close()

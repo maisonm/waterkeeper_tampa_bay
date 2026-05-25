@@ -13,4 +13,3 @@ class Site(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=True)
 
     samples = relationship("WaterQualitySample", back_populates="site")
-    weather_records = relationship("WeatherDailyRecord", back_populates="site")

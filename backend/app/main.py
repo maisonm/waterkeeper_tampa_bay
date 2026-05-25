@@ -32,7 +32,7 @@ app = FastAPI(title="Tampa Bay Water Quality API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # your frontend dev URL for now
+    allow_origins=["http://localhost:5173"],
     allow_methods=["GET"],
     allow_headers=["*"],
 )

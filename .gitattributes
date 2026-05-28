@@ -1,0 +1,22 @@
+# Linguist language classification
+
+# Primary languages
+*.py linguist-language=Python
+
+# Treat these as documentation/config, not source code
+*.txt linguist-documentation
+*.ini linguist-documentation
+*.example linguist-documentation
+Procfile linguist-documentation
+
+# Exclude generated/vendor files from language stats
+backend/alembic/versions/*.py linguist-generated
+*.mako linguist-vendored
+
+# Normalize line endings
+*.py text eol=lf
+*.sh text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+*.md text eol=lf

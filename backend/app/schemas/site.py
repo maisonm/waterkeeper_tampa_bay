@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 class SiteResponse(BaseModel):
-    int: int
+    id: int
     name: str
     latitude: float
     longitude: float

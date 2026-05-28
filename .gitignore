@@ -24,10 +24,7 @@ backend/alembic/versions/*.pyc
 .DS_Store
 Thumbs.db
 
-# Cursor
-.cursor/
 
-# Node (for future frontend)
 node_modules/
 .next/
 .nuxt/

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react"
+import { DEFAULT_DATE_RANGE } from "../components/FilterBar/DateRangeFilter/utils"
 
 type FilterState = {
   dateRangeFilter: DateRangeFilter
@@ -14,8 +15,8 @@ type DateRangeFilter = {
 const FilterContext = createContext<FilterState | null>(null)
 
 export function FilterProvider({ children }: { children: React.ReactNode }) {
-  const [startDate, setStartDate] = useState<string | undefined>(undefined)
-  const [endDate, setEndDate] = useState<string | undefined>(undefined)
+  const [startDate, setStartDate] = useState<string | undefined>(DEFAULT_DATE_RANGE.startDate)
+  const [endDate, setEndDate] = useState<string | undefined>(DEFAULT_DATE_RANGE.endDate)
 
   const dateRangeFilter: DateRangeFilter = {
     startDate,

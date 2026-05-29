@@ -35,8 +35,12 @@ export const PRESETS: Preset[] = [
   { label: "Last 12 months", value: "12m", days: 365 },
 ]
 
+export const DEFAULT_PRESET_DAYS = 30
+
 export const presetDates = (days: number): { startDate: string; endDate: string } => {
   const end = dayjs()
   const start = end.subtract(days - 1, "day")
   return { startDate: toInputValue(start), endDate: toInputValue(end) }
 }
+
+export const DEFAULT_DATE_RANGE = presetDates(DEFAULT_PRESET_DAYS)

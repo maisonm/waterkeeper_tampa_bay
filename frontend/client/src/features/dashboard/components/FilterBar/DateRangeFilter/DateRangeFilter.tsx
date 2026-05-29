@@ -11,6 +11,7 @@ import {
   clampDate,
   maxEndDate,
   minStartDate,
+  DEFAULT_PRESET_DAYS,
   presetDates,
   PRESETS,
 } from "./utils"
@@ -18,7 +19,9 @@ import {
 export default function DateRangeFilter() {
   const { dateRangeFilter } = useFilter()
   const { startDate, endDate, setStartDate, setEndDate } = dateRangeFilter
-  const [activePreset, setActivePreset] = useState<string | undefined>(undefined)
+  const [activePreset, setActivePreset] = useState<string | undefined>(
+    PRESETS.find((preset) => preset.days === DEFAULT_PRESET_DAYS)?.value,
+  )
 
   const handleStartChange = (date: string) => {
     setActivePreset(undefined)

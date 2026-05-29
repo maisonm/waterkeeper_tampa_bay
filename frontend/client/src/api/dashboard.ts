@@ -5,8 +5,6 @@ export interface DashboardParams extends ApiParams {
   start_date?: string
   end_date?: string
   quality_code?: string
-  limit?: number
-  offset?: number
 }
 
 export const getAllSitesDashboard = (params?: DashboardParams): Promise<DashboardResponse> =>

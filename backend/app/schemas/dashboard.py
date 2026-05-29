@@ -4,13 +4,11 @@ from app.schemas.water_quality_sample import WaterQualitySampleResponse
 from app.schemas.weather_daily_record import WeatherDailyRecordResponse
 
 
-class PaginatedSamples(BaseModel):
+class DashboardSamples(BaseModel):
     items: list[WaterQualitySampleResponse]
     total: int
-    limit: int
-    offset: int
 
 
 class DashboardResponse(BaseModel):
-    sample_sites: PaginatedSamples
+    sample_sites: DashboardSamples
     weather_records: list[WeatherDailyRecordResponse]

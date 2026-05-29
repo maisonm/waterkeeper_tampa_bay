@@ -18,8 +18,6 @@ async def get_all_site_samples(
     start_date: date | None = Query(default=None),
     end_date: date | None = Query(default=None),
     quality_code: str | None = Query(default=None),
-    limit: int = Query(default=100, ge=1, le=500),
-    offset: int = Query(default=0, ge=0),
     db: AsyncSession = Depends(get_db),
 ):
     response.headers["Cache-Control"] = _CACHE_HEADER
@@ -28,8 +26,6 @@ async def get_all_site_samples(
         start_date=start_date,
         end_date=end_date,
         quality_code=quality_code,
-        limit=limit,
-        offset=offset,
     )
 
 
@@ -40,8 +36,6 @@ async def get_site_samples(
     start_date: date | None = Query(default=None),
     end_date: date | None = Query(default=None),
     quality_code: str | None = Query(default=None),
-    limit: int = Query(default=100, ge=1, le=500),
-    offset: int = Query(default=0, ge=0),
     db: AsyncSession = Depends(get_db),
 ):
     response.headers["Cache-Control"] = _CACHE_HEADER
@@ -51,6 +45,4 @@ async def get_site_samples(
         start_date=start_date,
         end_date=end_date,
         quality_code=quality_code,
-        limit=limit,
-        offset=offset,
     )

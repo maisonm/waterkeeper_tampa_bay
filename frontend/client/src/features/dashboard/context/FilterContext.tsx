@@ -1,10 +1,14 @@
 import { createContext, useContext, useState } from "react"
 
 type FilterState = {
-  startDate: string | undefined
-  endDate: string | undefined
-  setStartDate: (d: string | undefined) => void
-  setEndDate: (d: string | undefined) => void
+  dateRangeFilter: DateRangeFilter
+}
+
+type DateRangeFilter = {
+    startDate: string | undefined
+    endDate: string | undefined
+    setStartDate: (date: string | undefined) => void
+    setEndDate: (date: string | undefined) => void
 }
 
 const FilterContext = createContext<FilterState | null>(null)
@@ -13,8 +17,19 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
   const [startDate, setStartDate] = useState<string | undefined>(undefined)
   const [endDate, setEndDate] = useState<string | undefined>(undefined)
 
+  const dateRangeFilter: DateRangeFilter = {
+    startDate,
+    endDate,
+    setStartDate,
+    setEndDate,
+  }
+
   return (
-    <FilterContext.Provider value={{ startDate, endDate, setStartDate, setEndDate }}>
+    <FilterContext.Provider
+      value={{
+        dateRangeFilter,
+      }}
+    >
       {children}
     </FilterContext.Provider>
   )

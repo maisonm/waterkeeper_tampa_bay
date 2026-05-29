@@ -8,7 +8,9 @@ export function useChartQuery<TData>(
   queryKey: QueryKey,
   fetcher: (filters: Filters) => Promise<TData>,
 ) {
-  const { startDate, endDate } = useFilter()
+  const { dateRangeFilter } = useFilter()
+  const { startDate, endDate } = dateRangeFilter
+
   return useQuery({
     queryKey: [...(queryKey as unknown[]), startDate, endDate],
     queryFn: () => fetcher({ startDate, endDate }),

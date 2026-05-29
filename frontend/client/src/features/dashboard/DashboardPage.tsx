@@ -1,5 +1,5 @@
 import { FilterProvider } from "./context/FilterContext"
-import FilterBar from "./components/FilterBar"
+import FilterBar from "./components/FilterBar/FilterBar"
 import MapPanel from "./components/MapPanel"
 import SamplesTable from "./components/SamplesTable"
 import ChartContainer from "./components/charts/ChartContainer"

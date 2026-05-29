@@ -2,10 +2,16 @@ import type { ColDef } from "ag-grid-community"
 import dayjs from "dayjs"
 import type { WaterQualitySample } from "@/api/types"
 
-export const QUALITY_CODES = {
+export const QUALITY_CODES: Record<string, string> = {
   "good": "Good",
   "moderate": "Moderate",
   "poor": "Poor",
+}
+
+export const QUALITY_CODE_COLORS: Record<string, string> = {
+  "good": "#D8FAAD",
+  "moderate": "#FFEE99",
+  "poor": "#FFD1AC",
 }
 
 export const COLUMN_DEFS: ColDef<WaterQualitySample>[] = [
@@ -34,12 +40,16 @@ export const COLUMN_DEFS: ColDef<WaterQualitySample>[] = [
     type: "numericColumn",
   },
   {
-    headerName: "Quality Code",
+    headerName: "Quality",
     field: "quality_code",
     sortable: true,
     flex: 1,
     minWidth: 120,
     valueFormatter: (params) =>
-      params.value ? (QUALITY_CODES[params.value as keyof typeof QUALITY_CODES] ?? params.value) : "",
+      params.value ? (QUALITY_CODES[params.value as string] ?? params.value) : "",
+    cellStyle: (params) => {
+      const bg = QUALITY_CODE_COLORS[params.value as string]
+      return bg ? { backgroundColor: bg, color: "#1a1a1a" } : null
+    },
   },
 ]

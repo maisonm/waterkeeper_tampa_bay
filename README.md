@@ -4,7 +4,7 @@ A web application for tracking and visualizing current and historical water qual
 
 ## Overview
 
-Tampa Bay Waterkeeper collects water quality samples at monitoring sites throughout the bay. This dashboard ingests that data and presents it through interactive charts, a filterable sample table, and a live map of sampling locations — giving researchers, advocates, and the public a clear view of water health trends over time.
+Tampa Bay Waterkeeper collects water quality samples at monitoring sites throughout the bay. This dashboard ingests that public data and presents it through interactive charts, a filterable sample table, and a live map of sampling locations — giving researchers, advocates, and the public a clear view of water health trends over time.
 
 ## Tech Stack
 

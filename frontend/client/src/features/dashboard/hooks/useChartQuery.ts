@@ -14,5 +14,6 @@ export function useChartQuery<TData>(
   return useQuery({
     queryKey: [...(queryKey as unknown[]), startDate, endDate],
     queryFn: () => fetcher({ startDate, endDate }),
+    throwOnError: true,
   })
 }

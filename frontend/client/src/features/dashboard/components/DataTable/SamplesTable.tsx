@@ -20,6 +20,7 @@ export default function SamplesTable() {
   const { data: dashboard, isLoading } = useQuery({
     queryKey: ["dashboard", "sites", startDate, endDate],
     queryFn: () => getAllSitesDashboard({ start_date: startDate, end_date: endDate }),
+    throwOnError: true,
   })
 
   const rowData = dashboard?.sample_sites.items ?? []

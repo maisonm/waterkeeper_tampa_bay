@@ -1,3 +1,4 @@
+import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary"
 import ChartTile from "./ChartTile"
 
 const CHART_TILES = [
@@ -11,7 +12,9 @@ export default function ChartContainer() {
   return (
     <div className="grid grid-cols-2 gap-3">
       {CHART_TILES.map((tile) => (
-        <ChartTile key={tile.id} title={tile.title} />
+        <SectionErrorBoundary key={tile.id} sectionName={tile.title}>
+          <ChartTile title={tile.title} />
+        </SectionErrorBoundary>
       ))}
     </div>
   )

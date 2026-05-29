@@ -1,16 +1,15 @@
-import asyncio
 from datetime import date, timedelta
 
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.exceptions.exceptions import SiteNotFoundError
-from app.schemas.dashboard import DashboardResponse, PaginatedSamples
+from app.schemas.dashboard import DashboardResponse, DashboardSamples
 from app.schemas.weather_daily_record import WeatherDailyRecordResponse
-from app.services.sample_service import get_samples_paginated
+from app.services.sample_service import get_samples_for_dashboard
 from app.services.weather_service import get_weather_record
 
-MAX_DATE_RANGE_DAYS = 366
+MAX_DATE_RANGE_DAYS = 364
 
 
 def _resolve_date_range(
@@ -40,34 +39,26 @@ async def get_dashboard(
     start_date: date | None = None,
     end_date: date | None = None,
     quality_code: str | None = None,
-    limit: int = 100,
-    offset: int = 0,
 ) -> DashboardResponse:
     start, end = _resolve_date_range(start_date, end_date)
     _validate_date_range(start, end)
 
     try:
-        (items, total), weather = await asyncio.gather(
-            get_samples_paginated(
-                db,
-                site_id=site_id,
-                start_date=start,
-                end_date=end,
-                quality_code=quality_code,
-                limit=limit,
-                offset=offset,
-            ),
-            get_weather_record(db, start_date=start, end_date=end),
+        items = await get_samples_for_dashboard(
+            db,
+            site_id=site_id,
+            start_date=start,
+            end_date=end,
+            quality_code=quality_code,
         )
+        weather = await get_weather_record(db, start_date=start, end_date=end)
     except SiteNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
 
     return DashboardResponse(
-        sample_sites=PaginatedSamples(
+        sample_sites=DashboardSamples(
             items=items,
-            total=total,
-            limit=limit,
-            offset=offset,
+            total=len(items),
         ),
         weather_records=[WeatherDailyRecordResponse.model_validate(w) for w in weather],
     )

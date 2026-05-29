@@ -10,6 +10,7 @@ export interface Site {
 export interface WaterQualitySample {
   id: number
   site_id: number
+  site_name: string
   sample_date: string
   enterococci_per_100ml: number
   quality_code: string
@@ -26,14 +27,12 @@ export interface WeatherDailyRecord {
   source: string | null
 }
 
-export interface PaginatedSamples {
+export interface DashboardSamples {
   items: WaterQualitySample[]
   total: number
-  limit: number
-  offset: number
 }
 
 export interface DashboardResponse {
-  sample_sites: PaginatedSamples
+  sample_sites: DashboardSamples
   weather_records: WeatherDailyRecord[]
 }

@@ -55,10 +55,10 @@ export default function DateRangeFilter() {
     }
     const preset = PRESETS.find((p) => p.value === value)
     if (!preset) return
-    const { startDate: s, endDate: e } = presetDates(preset.days)
+    const { startDate, endDate} = presetDates(preset.days)
     setActivePreset(value)
-    setStartDate(s)
-    setEndDate(e)
+    setStartDate(startDate)
+    setEndDate(endDate)
   }
 
   return (
@@ -68,9 +68,9 @@ export default function DateRangeFilter() {
           <SelectValue placeholder="Date presets" />
         </SelectTrigger>
         <SelectContent>
-          {PRESETS.map((p) => (
-            <SelectItem key={p.value} value={p.value}>
-              {p.label}
+          {PRESETS.map((preset) => (
+            <SelectItem key={preset.value} value={preset.value}>
+              {preset.label}
             </SelectItem>
           ))}
           <SelectItem value="clear" className="text-muted-foreground">

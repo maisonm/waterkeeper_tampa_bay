@@ -9,10 +9,10 @@ export const clampDate = (
   lo: string | undefined,
   hi: string | undefined,
 ): string => {
-  let d = dayjs(date)
-  if (lo && d.isBefore(dayjs(lo))) d = dayjs(lo)
-  if (hi && d.isAfter(dayjs(hi))) d = dayjs(hi)
-  return toInputValue(d)
+  let parsed = dayjs(date)
+  if (lo && parsed.isBefore(dayjs(lo))) parsed = dayjs(lo)
+  if (hi && parsed.isAfter(dayjs(hi))) parsed = dayjs(hi)
+  return toInputValue(parsed)
 }
 
 export const maxEndDate = (startDate: string): string =>

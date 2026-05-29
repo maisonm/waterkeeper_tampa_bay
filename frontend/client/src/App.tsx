@@ -1,5 +1,8 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { ThemeProvider } from "@/context/ThemeContext"
+
+const queryClient = new QueryClient()
 import DashboardLayout from "@/layout/DashboardLayout"
 import DocsLayout from "@/layout/DocsLayout"
 import AboutLayout from "@/layout/AboutLayout"
@@ -24,8 +27,10 @@ const router = createBrowserRouter([
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </QueryClientProvider>
   )
 }

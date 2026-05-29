@@ -10,6 +10,7 @@ export interface Site {
 export interface WaterQualitySample {
   id: number
   site_id: number
+  site_name: string
   sample_date: string
   enterococci_per_100ml: number
   quality_code: string

@@ -1,4 +1,3 @@
-import asyncio
 from datetime import date, timedelta
 
 from fastapi import HTTPException
@@ -47,18 +46,16 @@ async def get_dashboard(
     _validate_date_range(start, end)
 
     try:
-        (items, total), weather = await asyncio.gather(
-            get_samples_paginated(
-                db,
-                site_id=site_id,
-                start_date=start,
-                end_date=end,
-                quality_code=quality_code,
-                limit=limit,
-                offset=offset,
-            ),
-            get_weather_record(db, start_date=start, end_date=end),
+        items, total = await get_samples_paginated(
+            db,
+            site_id=site_id,
+            start_date=start,
+            end_date=end,
+            quality_code=quality_code,
+            limit=limit,
+            offset=offset,
         )
+        weather = await get_weather_record(db, start_date=start, end_date=end)
     except SiteNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
 

@@ -1,5 +1,6 @@
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from app.models.water_quality_sample import WaterQualitySample
 from app.models.site import Site
@@ -35,9 +36,12 @@ async def get_samples_paginated(
     total = count_result.scalar_one()
 
     items_result = await db.execute(
-        base.order_by(WaterQualitySample.sample_date.desc()).limit(limit).offset(offset)
+        base.options(joinedload(WaterQualitySample.site))
+        .order_by(WaterQualitySample.sample_date.desc())
+        .limit(limit)
+        .offset(offset)
     )
-    items = list(items_result.scalars().all())
+    items = list(items_result.scalars().unique().all())
 
     return items, total
 

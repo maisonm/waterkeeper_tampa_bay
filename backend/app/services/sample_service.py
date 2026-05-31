@@ -1,20 +1,19 @@
-from sqlalchemy import select, func
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from app.models.water_quality_sample import WaterQualitySample
 from app.models.site import Site
 from app.exceptions.exceptions import SiteNotFoundError
 
 
-async def get_samples_paginated(
+async def get_samples_for_dashboard(
     db: AsyncSession,
     site_id: int | None = None,
     start_date=None,
     end_date=None,
     quality_code: str | None = None,
-    limit: int = 100,
-    offset: int = 0,
-) -> tuple[list, int]:
+) -> list:
     if site_id is not None:
         result = await db.execute(select(Site).filter(Site.id == site_id))
         if result.scalar_one_or_none() is None:
@@ -31,15 +30,11 @@ async def get_samples_paginated(
     if quality_code is not None:
         base = base.filter(WaterQualitySample.quality_code == quality_code)
 
-    count_result = await db.execute(select(func.count()).select_from(base.subquery()))
-    total = count_result.scalar_one()
-
     items_result = await db.execute(
-        base.order_by(WaterQualitySample.sample_date.desc()).limit(limit).offset(offset)
+        base.options(joinedload(WaterQualitySample.site))
+        .order_by(WaterQualitySample.sample_date.desc())
     )
-    items = list(items_result.scalars().all())
-
-    return items, total
+    return list(items_result.scalars().unique().all())
 
 
 async def get_samples_for_site(

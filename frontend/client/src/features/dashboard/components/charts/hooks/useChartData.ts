@@ -6,7 +6,7 @@ import type { ChartKind } from "../types"
 import { buildEnterococciBarOptions } from "../transforms/enterococciBar"
 import { buildEnterococciLineOptions } from "../transforms/enterococciLine"
 import { pivotEnterococciByDate } from "../transforms/pivotEnterococciByDate"
-import { buildPrecipitationLineOptions } from "../transforms/precipitationLine"
+import { buildPrecipitationBarOptions } from "../transforms/precipitationBar"
 
 const isChartEmpty = (chartKind: ChartKind, dashboard: NonNullable<ReturnType<typeof useDashboardQuery>["data"]>) => {
   const samples = dashboard.sample_sites.items
@@ -37,7 +37,7 @@ const buildOptions = (
       return buildEnterococciBarOptions(pivot, theme)
     }
     case "precipitation":
-      return buildPrecipitationLineOptions(dashboard.weather_records, theme)
+      return buildPrecipitationBarOptions(dashboard.weather_records, theme)
   }
 }
 

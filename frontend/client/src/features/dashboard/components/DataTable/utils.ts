@@ -9,9 +9,9 @@ export const QUALITY_CODES: Record<string, string> = {
 }
 
 export const QUALITY_CODE_COLORS: Record<string, string> = {
-  "good": "#D8FAAD",
-  "moderate": "#FFEE99",
-  "poor": "#FFD1AC",
+  "good": "#8CEC70",
+  "moderate": "#FBE95E",
+  "poor": "#FD9352",
 }
 
 export const COLUMN_DEFS: ColDef<WaterQualitySample>[] = [

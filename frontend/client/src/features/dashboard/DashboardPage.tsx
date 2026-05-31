@@ -1,6 +1,7 @@
 import { SectionErrorBoundary } from "@/components/ErrorBoundary/SectionErrorBoundary"
 import { FilterProvider } from "./context/FilterContext"
 import FilterBar from "./components/FilterBar/FilterBar"
+import SummaryKpiStrip from "./components/SummaryKpiStrip/SummaryKpiStrip"
 import MapPanel from "./components/MapPanel"
 import SamplesTable from "./components/DataTable/SamplesTable"
 import ChartContainer from "./components/charts/ChartContainer"
@@ -14,6 +15,10 @@ const DashboardPage = () => (
 
       <SectionErrorBoundary sectionName="Filters">
         <FilterBar />
+      </SectionErrorBoundary>
+
+      <SectionErrorBoundary sectionName="Summary">
+        <SummaryKpiStrip />
       </SectionErrorBoundary>
 
       <div className="grid h-[50vh] min-h-[16rem] shrink-0 grid-cols-[1fr_2fr] gap-4">

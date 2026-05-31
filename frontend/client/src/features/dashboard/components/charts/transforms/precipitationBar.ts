@@ -3,7 +3,7 @@ import type { WeatherDailyRecord } from "@/api/types"
 import type { Theme } from "@/context/ThemeContext"
 import { withChartTheme } from "./chartTheme"
 
-export const buildPrecipitationLineOptions = (
+export const buildPrecipitationBarOptions = (
   weatherRecords: WeatherDailyRecord[],
   theme: Theme,
 ): AgCartesianChartOptions => {
@@ -18,10 +18,9 @@ export const buildPrecipitationLineOptions = (
     data,
     series: [
       {
-        type: "line",
+        type: "bar",
         xKey: "date",
         yKey: "precipitation",
-        title: "Precipitation (in)",
       },
     ],
     axes: {
@@ -29,6 +28,7 @@ export const buildPrecipitationLineOptions = (
       y: {
         type: "number",
         title: { text: "Precipitation (in)" },
+        min: 0,
       },
     },
     legend: { enabled: false },

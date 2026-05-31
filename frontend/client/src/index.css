@@ -117,6 +117,35 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Keep Leaflet panes inside the map card so portaled overlays (z-[1000]) stay on top */
+.dashboard-map .leaflet-pane {
+  z-index: 1 !important;
+}
+.dashboard-map .leaflet-tile-pane {
+  z-index: 1 !important;
+}
+.dashboard-map .leaflet-overlay-pane {
+  z-index: 2 !important;
+}
+.dashboard-map .leaflet-shadow-pane {
+  z-index: 3 !important;
+}
+.dashboard-map .leaflet-marker-pane {
+  z-index: 4 !important;
+}
+.dashboard-map .leaflet-tooltip-pane {
+  z-index: 5 !important;
+}
+.dashboard-map .leaflet-popup-pane {
+  z-index: 6 !important;
+}
+.dashboard-map .leaflet-map-pane canvas {
+  z-index: 1 !important;
+}
+.dashboard-map .leaflet-map-pane svg {
+  z-index: 1 !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

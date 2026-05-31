@@ -1,10 +1,8 @@
 import { AgGridReact } from "ag-grid-react"
 import type { ColDef } from "ag-grid-community"
 import { themeQuartz } from "ag-grid-community"
-import { useQuery } from "@tanstack/react-query"
-import { getAllSitesDashboard } from "@/api/dashboard"
-import { useFilter } from "../../context/FilterContext"
 import { useTheme } from "@/context/ThemeContext"
+import { useDashboardQuery } from "../../hooks/useDashboardQuery"
 import { COLUMN_DEFS } from "./utils"
 import type { WaterQualitySample } from "@/api/types"
 
@@ -12,16 +10,9 @@ const DEFAULT_COL_DEF: ColDef<WaterQualitySample> = {
   resizable: true,
 }
 
-export default function SamplesTable() {
-  const { dateRangeFilter } = useFilter()
-  const { startDate, endDate } = dateRangeFilter
+const SamplesTable = () => {
   const { theme } = useTheme()
-
-  const { data: dashboard, isLoading } = useQuery({
-    queryKey: ["dashboard", "sites", startDate, endDate],
-    queryFn: () => getAllSitesDashboard({ start_date: startDate, end_date: endDate }),
-    throwOnError: true,
-  })
+  const { data: dashboard, isLoading } = useDashboardQuery()
 
   const rowData = dashboard?.sample_sites.items ?? []
   const gridTheme = themeQuartz.withParams({
@@ -29,7 +20,7 @@ export default function SamplesTable() {
   })
 
   return (
-    <div style={{ height: 360 }}>
+    <div className="h-full w-full [&_.ag-root-wrapper]:h-full">
       <AgGridReact<WaterQualitySample>
         theme={gridTheme}
         rowData={rowData}
@@ -41,3 +32,5 @@ export default function SamplesTable() {
     </div>
   )
 }
+
+export default SamplesTable

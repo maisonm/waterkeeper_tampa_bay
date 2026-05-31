@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom"
 import { Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/context/ThemeContext"
-import { navRoutes } from "@/router/routes"
+import { navRoutes } from "@/router"
 
 export default function Navbar() {
   const { theme, toggle } = useTheme()

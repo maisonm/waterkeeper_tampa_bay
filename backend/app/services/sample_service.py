@@ -61,5 +61,8 @@ async def get_samples_for_site(
     if quality_code is not None:
         stmt = stmt.filter(WaterQualitySample.quality_code == quality_code)
 
-    result = await db.execute(stmt.order_by(WaterQualitySample.sample_date.desc()))
-    return result.scalars().all()
+    result = await db.execute(
+        stmt.options(joinedload(WaterQualitySample.site))
+        .order_by(WaterQualitySample.sample_date.desc())
+    )
+    return list(result.scalars().unique().all())

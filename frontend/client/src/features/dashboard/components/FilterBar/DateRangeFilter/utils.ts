@@ -35,7 +35,7 @@ export const PRESETS: Preset[] = [
   { label: "Last 12 months", value: "12m", days: 365 },
 ]
 
-export const DEFAULT_PRESET_DAYS = 30
+export const DEFAULT_PRESET_DAYS = 60
 
 export const presetDates = (days: number): { startDate: string; endDate: string } => {
   const end = dayjs()
@@ -44,3 +44,15 @@ export const presetDates = (days: number): { startDate: string; endDate: string 
 }
 
 export const DEFAULT_DATE_RANGE = presetDates(DEFAULT_PRESET_DAYS)
+
+export const findMatchingPresetValue = (
+  startDate: string | undefined,
+  endDate: string | undefined,
+): string | undefined => {
+  if (!startDate || !endDate) return undefined
+
+  return PRESETS.find((preset) => {
+    const range = presetDates(preset.days)
+    return range.startDate === startDate && range.endDate === endDate
+  })?.value
+}

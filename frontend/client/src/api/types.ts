@@ -1,4 +1,3 @@
-// unused for now 
 export interface Site {
   id: number
   name: string

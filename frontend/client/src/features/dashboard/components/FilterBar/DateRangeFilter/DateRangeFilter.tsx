@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useLayoutEffect, useMemo, useRef } from "react"
 import {
   Select,
   SelectContent,
@@ -12,19 +12,31 @@ import {
   maxEndDate,
   minStartDate,
   DEFAULT_PRESET_DAYS,
+  findMatchingPresetValue,
   presetDates,
   PRESETS,
 } from "./utils"
 
-export default function DateRangeFilter() {
+const DateRangeFilter = () => {
   const { dateRangeFilter } = useFilter()
   const { startDate, endDate, setStartDate, setEndDate } = dateRangeFilter
-  const [activePreset, setActivePreset] = useState<string | undefined>(
-    PRESETS.find((preset) => preset.days === DEFAULT_PRESET_DAYS)?.value,
+  const hasAppliedDefault = useRef(false)
+
+  const activePreset = useMemo(
+    () => findMatchingPresetValue(startDate, endDate),
+    [startDate, endDate],
   )
 
+  useLayoutEffect(() => {
+    if (hasAppliedDefault.current) return
+    hasAppliedDefault.current = true
+
+    const { startDate: defaultStart, endDate: defaultEnd } = presetDates(DEFAULT_PRESET_DAYS)
+    setStartDate(defaultStart)
+    setEndDate(defaultEnd)
+  }, [setStartDate, setEndDate])
+
   const handleStartChange = (date: string) => {
-    setActivePreset(undefined)
     if (!date) {
       setStartDate(undefined)
       return
@@ -37,7 +49,6 @@ export default function DateRangeFilter() {
   }
 
   const handleEndChange = (date: string) => {
-    setActivePreset(undefined)
     if (!date) {
       setEndDate(undefined)
       return
@@ -51,17 +62,15 @@ export default function DateRangeFilter() {
 
   const handlePreset = (value: string) => {
     if (value === "clear") {
-      setActivePreset(undefined)
       setStartDate(undefined)
       setEndDate(undefined)
       return
     }
-    const preset = PRESETS.find((p) => p.value === value)
+    const preset = PRESETS.find((entry) => entry.value === value)
     if (!preset) return
-    const { startDate, endDate} = presetDates(preset.days)
-    setActivePreset(value)
-    setStartDate(startDate)
-    setEndDate(endDate)
+    const { startDate: presetStart, endDate: presetEnd } = presetDates(preset.days)
+    setStartDate(presetStart)
+    setEndDate(presetEnd)
   }
 
   return (
@@ -70,7 +79,7 @@ export default function DateRangeFilter() {
         <SelectTrigger className="w-40">
           <SelectValue placeholder="Date presets" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent position="popper" className="z-[1000]">
           {PRESETS.map((preset) => (
             <SelectItem key={preset.value} value={preset.value}>
               {preset.label}
@@ -88,7 +97,7 @@ export default function DateRangeFilter() {
         value={startDate ?? ""}
         min={endDate ? minStartDate(endDate) : undefined}
         max={endDate ?? undefined}
-        onChange={(e) => handleStartChange(e.target.value)}
+        onChange={(event) => handleStartChange(event.target.value)}
         className="rounded border border-border bg-background px-2 py-1 text-sm text-foreground"
       />
 
@@ -98,9 +107,11 @@ export default function DateRangeFilter() {
         value={endDate ?? ""}
         min={startDate ?? undefined}
         max={startDate ? maxEndDate(startDate) : undefined}
-        onChange={(e) => handleEndChange(e.target.value)}
+        onChange={(event) => handleEndChange(event.target.value)}
         className="rounded border border-border bg-background px-2 py-1 text-sm text-foreground"
       />
     </>
   )
 }
+
+export default DateRangeFilter

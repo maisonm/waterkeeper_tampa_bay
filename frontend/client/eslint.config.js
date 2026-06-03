@@ -19,4 +19,16 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    files: [
+      'src/context/**/*.tsx',
+      'src/features/**/context/**/*.tsx',
+    ],
+    rules: {
+      'react-refresh/only-export-components': [
+        'error',
+        { allowExportNames: ['useTheme', 'useFilter'] },
+      ],
+    },
+  },
 ])

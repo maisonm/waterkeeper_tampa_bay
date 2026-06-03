@@ -38,7 +38,7 @@ const DateRangeFilter = () => {
 
   const handleStartChange = (date: string) => {
     if (!date) {
-      setStartDate(undefined)
+      setStartDate('')
       return
     }
     setStartDate(date)
@@ -50,7 +50,7 @@ const DateRangeFilter = () => {
 
   const handleEndChange = (date: string) => {
     if (!date) {
-      setEndDate(undefined)
+      setEndDate('')
       return
     }
     setEndDate(date)
@@ -62,8 +62,8 @@ const DateRangeFilter = () => {
 
   const handlePreset = (value: string) => {
     if (value === "clear") {
-      setStartDate(undefined)
-      setEndDate(undefined)
+      setStartDate('')
+      setEndDate('')
       return
     }
     const preset = PRESETS.find((entry) => entry.value === value)

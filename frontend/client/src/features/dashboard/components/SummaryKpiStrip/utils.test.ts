@@ -1,6 +1,39 @@
-import { describe, expect, it } from "vitest"
-import { computeSummaryKpis } from "./summaryKpis"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { computeSummaryKpis, getLast30DaysDateRange, getMonthKey } from "./utils"
 import { makeSample } from "@/test/fixtures"
+
+describe("getLast30DaysDateRange", () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date("2024-06-15T12:00:00Z"))
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it("returns a 30-day window ending today", () => {
+    expect(getLast30DaysDateRange()).toEqual({
+      startDate: "2024-05-17",
+      endDate: "2024-06-15",
+    })
+  })
+})
+
+describe("getMonthKey", () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date("2024-06-15T12:00:00Z"))
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it("returns the current year-month key", () => {
+    expect(getMonthKey()).toBe("2024-06")
+  })
+})
 
 describe("computeSummaryKpis", () => {
   it("returns zeroed metrics for empty input", () => {

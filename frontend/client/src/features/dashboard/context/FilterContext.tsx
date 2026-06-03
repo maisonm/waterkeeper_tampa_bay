@@ -13,8 +13,8 @@ type FilterState = {
 type DateRangeFilter = {
   startDate: string | undefined
   endDate: string | undefined
-  setStartDate: (date: string | undefined) => void
-  setEndDate: (date: string | undefined) => void
+  setStartDate: (date: string) => void
+  setEndDate: (date: string) => void
 }
 
 type SitesFilter = {

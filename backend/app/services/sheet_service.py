@@ -1,6 +1,12 @@
 import pandas as pd
 
 
+def _parse_coordinate(value: object) -> float:
+    if isinstance(value, str):
+        value = value.strip()
+    return float(value)
+
+
 def get_sheet_data(url: str):
     sheet = pd.read_csv(url)
 
@@ -19,8 +25,8 @@ def parse_rows(sheet: pd.DataFrame):
         results.append(
             {
                 "name": row["sample_site"],
-                "latitude": row["latitude"],
-                "longitude": row["longitude"],
+                "latitude": _parse_coordinate(row["latitude"]),
+                "longitude": _parse_coordinate(row["longitude"]),
                 "sample_date": pd.Timestamp(str(row["date"])).date(),
                 "enterococci_per_100ml": row["enterococci_per_100ml"],
                 "quality_code": row["enterococcus_code"],

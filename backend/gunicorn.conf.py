@@ -1,11 +1,10 @@
-import multiprocessing
 import os
 
 # Worker class 
 worker_class = "uvicorn.workers.UvicornWorker"
 
-# (2 x CPU cores) + 1 
-workers = int(os.getenv("WEB_CONCURRENCY", multiprocessing.cpu_count() * 2 + 1))
+# Default to 1 worker so startup sync and APScheduler only run once per deploy.
+workers = int(os.getenv("WEB_CONCURRENCY", "1"))
 
 # Bind to all interfaces
 bind = f"0.0.0.0:{os.getenv('PORT', '8000')}"
@@ -14,8 +13,8 @@ bind = f"0.0.0.0:{os.getenv('PORT', '8000')}"
 max_requests = 1000
 max_requests_jitter = 100  # randomise restarts so they don't all happen at once
 
-# How long a worker has to handle a request before being killed
-timeout = 30
+# Sync jobs fetch external data; allow enough time for slow network I/O.
+timeout = 120
 
 # Graceful shutdown - let in flight requests finish
 graceful_timeout = 10

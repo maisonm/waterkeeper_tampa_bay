@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from asyncio import create_task
+import asyncio
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -15,6 +15,7 @@ from app.api.routes import sites, weather_records, dashboard
 from app.core.database import SYNC_DATABASE_URL, engine
 from app.core.logging import configure_logging
 from app.exceptions.exceptions import SiteNotFoundError
+from app.jobs.startup import run_startup_sync
 from app.jobs.sync_samples import run_sync
 from app.jobs.sync_weather import run_weather_sync
 
@@ -47,8 +48,7 @@ async def lifespan(app: FastAPI):
     logger.info("Database connection verified.")
 
     logger.info("Running initial sync on startup...")
-    create_task(run_sync())
-    create_task(run_weather_sync())
+    asyncio.create_task(run_startup_sync())
 
     scheduler.add_job(run_sync, "cron", day_of_week="mon", hour=7, minute=0)
     scheduler.add_job(run_sync, "cron", day_of_week="fri", hour=7, minute=0)

@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 import logging
 import os
@@ -15,10 +16,13 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-SHEET_URL = (
-    f"https://docs.google.com/spreadsheets/d/"
-    f"{os.getenv('SPREADSHEET_ID')}/export?format=csv&gid={os.getenv('SHEET_GID')}"
-)
+def _sheet_url() -> str:
+    spreadsheet_id = os.getenv("SPREADSHEET_ID")
+    sheet_gid = os.getenv("SHEET_GID")
+    return (
+        f"https://docs.google.com/spreadsheets/d/"
+        f"{spreadsheet_id}/export?format=csv&gid={sheet_gid}"
+    )
 
 
 async def upsert_sites(db, rows: list[dict]) -> dict[str, int]:
@@ -121,7 +125,7 @@ async def run_sync():
     logger.info("Starting water quality sample sync...")
     async with SessionLocal() as db:
         try:
-            rows = get_sheet_data(SHEET_URL)
+            rows = await asyncio.to_thread(get_sheet_data, _sheet_url())
             logger.info(f"Fetched {len(rows)} rows from spreadsheet.")
 
             site_map = await upsert_sites(db, rows)
@@ -130,7 +134,7 @@ async def run_sync():
             await db.commit()
             logger.info(f"Sync completed. {inserted} new samples inserted. Skipped {len(rows) - inserted} duplicates.")
 
-        except Exception as e:
+        except Exception:
             await db.rollback()
-            logger.error(f"Error during sync: {e}")
+            logger.exception("Error during sample sync")
             raise

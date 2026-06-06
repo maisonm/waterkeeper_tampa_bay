@@ -1,5 +1,5 @@
+import asyncio
 import logging
-import os
 from datetime import date
 
 import httpx
@@ -90,7 +90,7 @@ async def run_weather_sync():
         return
 
     logger.info(f"Fetching weather from {min_date} to {max_date}...")
-    records = fetch_weather(min_date, max_date)
+    records = await asyncio.to_thread(fetch_weather, min_date, max_date)
     logger.info(f"Fetched {len(records)} weather records from Open-Meteo.")
 
     async with SessionLocal() as db:
@@ -98,7 +98,7 @@ async def run_weather_sync():
             inserted = await insert_weather(db, records)
             await db.commit()
             logger.info(f"Weather sync complete. {inserted} new records inserted.")
-        except Exception as e:
+        except Exception:
             await db.rollback()
-            logger.error(f"Weather sync failed: {e}")
+            logger.exception("Weather sync failed")
             raise

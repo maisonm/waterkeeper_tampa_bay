@@ -19,4 +19,23 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    files: [
+      'src/context/**/*.tsx',
+      'src/features/**/context/**/*.tsx',
+    ],
+    rules: {
+      'react-refresh/only-export-components': [
+        'error',
+        { allowExportNames: ['useTheme', 'useFilter'] },
+      ],
+    },
+  },
+  // shadcn/ui may export variant helpers (e.g. cva) alongside components
+  {
+    files: ['src/components/ui/**/*.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])

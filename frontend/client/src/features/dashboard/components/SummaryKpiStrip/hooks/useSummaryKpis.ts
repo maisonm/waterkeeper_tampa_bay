@@ -1,16 +1,15 @@
 import { useMemo } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { getAllSitesDashboard } from "@/api/dashboard"
-import { getCurrentMonthDateRange, getCurrentMonthKey } from "../utils/currentMonthRange"
-import { computeSummaryKpis } from "../utils/summaryKpis"
+import { getLast30DaysDateRange, getMonthKey, computeSummaryKpis } from "../utils"
 
 export const useSummaryKpis = () => {
-  const monthKey = getCurrentMonthKey()
+  const monthKey = getMonthKey()
 
   const query = useQuery({
     queryKey: ["dashboard", "summary-kpis", monthKey],
     queryFn: () => {
-      const { startDate, endDate } = getCurrentMonthDateRange()
+      const { startDate, endDate } = getLast30DaysDateRange()
       return getAllSitesDashboard({ start_date: startDate, end_date: endDate })
     },
     staleTime: Number.POSITIVE_INFINITY,

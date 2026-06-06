@@ -6,8 +6,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { QUALITY_CODE_COLORS, QUALITY_CODES } from "../DataTable/utils"
-import { useSummaryKpis } from "../../hooks/useSummaryKpis"
-import type { QualityBucket, SummaryKpis } from "../../utils/summaryKpis"
+import { useSummaryKpis } from "./hooks/useSummaryKpis"
+import type { QualityBucket, SummaryKpis } from "./utils"
 import KpiCard from "./KpiCard"
 import SiteListTooltipContent from "./SiteListTooltipContent"
 
@@ -88,22 +88,22 @@ const SummaryKpiStrip = () => {
 
   return (
     <TooltipProvider>
-      <div className="grid shrink-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid shrink-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 pb-6 pt-6">
         <KpiCard
-          label="Sites sampled this month"
+          label="Sites sampled in last 30 days"
           tooltip={
             kpis ? (
               <SiteListTooltipContent
-                title="Sites with samples this month"
+                title="Sites with samples in the last 30 days"
                 siteNames={kpis.sampledSiteNames}
-                emptyMessage="No sites sampled this month"
+                emptyMessage="No sites sampled in the last 30 days"
               />
             ) : undefined
           }
         >
           <p className="text-2xl font-semibold tabular-nums text-foreground">{sitesSampled}</p>
           <p className="text-xs text-muted-foreground">
-            Unique sites with at least one sample in the current month
+            Unique sites with at least one sample in the last 30 days
           </p>
         </KpiCard>
 
@@ -111,7 +111,7 @@ const SummaryKpiStrip = () => {
           {isLoading || !kpis ? (
             <p className="text-2xl font-semibold text-foreground">{PLACEHOLDER}</p>
           ) : kpis.sitesSampled === 0 ? (
-            <p className="text-sm text-muted-foreground">No samples this month</p>
+            <p className="text-sm text-muted-foreground">No samples in the last 30 days</p>
           ) : (
             <QualityBreakdown kpis={kpis} />
           )}
@@ -119,7 +119,7 @@ const SummaryKpiStrip = () => {
 
         <KpiCard label="Most recent sample date">
           <p className="text-2xl font-semibold text-foreground">{mostRecentDate}</p>
-          <p className="text-xs text-muted-foreground">Newest sample in the current month</p>
+          <p className="text-xs text-muted-foreground">Newest sample in the last 30 days</p>
         </KpiCard>
 
         <KpiCard
@@ -136,7 +136,7 @@ const SummaryKpiStrip = () => {
         >
           <p className="text-2xl font-semibold tabular-nums text-foreground">{sitesPoor}</p>
           <p className="text-xs text-muted-foreground">
-            Sites whose latest reading this month is poor
+            Sites whose latest reading in the last 30 days is poor
           </p>
         </KpiCard>
       </div>

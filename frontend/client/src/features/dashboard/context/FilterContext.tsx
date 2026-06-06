@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react"
+import { createContext, useContext, useMemo, useState } from "react"
 import type { Dispatch, SetStateAction } from "react"
 import { isSiteIncluded } from "../components/FilterBar/SiteFilter/utils"
 import { DEFAULT_DATE_RANGE } from "../components/FilterBar/DateRangeFilter/utils"
@@ -13,8 +13,8 @@ type FilterState = {
 type DateRangeFilter = {
   startDate: string | undefined
   endDate: string | undefined
-  setStartDate: (date: string | undefined) => void
-  setEndDate: (date: string | undefined) => void
+  setStartDate: (date: string) => void
+  setEndDate: (date: string) => void
 }
 
 type SitesFilter = {
@@ -42,12 +42,11 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
 
   const allSiteIds = useMemo(() => sites.map((site) => site.id), [sites])
 
-  useEffect(() => {
-    if (focusedSiteId === null) return
-    if (!isSiteIncluded(focusedSiteId, selectedSiteIds, allSiteIds)) {
-      setFocusedSiteId(null)
-    }
-  }, [focusedSiteId, selectedSiteIds, allSiteIds])
+  const activeFocusedSiteId =
+    focusedSiteId !== null &&
+    isSiteIncluded(focusedSiteId, selectedSiteIds, allSiteIds)
+      ? focusedSiteId
+      : null
 
   const dateRangeFilter: DateRangeFilter = {
     startDate,
@@ -70,7 +69,7 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
   }
 
   const tableFocus: TableFocus = {
-    focusedSiteId,
+    focusedSiteId: activeFocusedSiteId,
     toggleTableFocus,
     clearTableFocus,
   }

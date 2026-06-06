@@ -1,6 +1,17 @@
+import dayjs from "dayjs"
 import type { WaterQualitySample } from "@/api/types"
 
 export type QualityBucket = "good" | "moderate" | "poor"
+
+export const getLast30DaysDateRange = (): { startDate: string; endDate: string } => {
+  const end = dayjs()
+  const formatDate = (date: dayjs.Dayjs) => date.format("YYYY-MM-DD")
+  const start = end.subtract(30 - 1, "day")
+
+  return { startDate: formatDate(start), endDate: formatDate(end) }
+}
+
+export const getMonthKey = (): string => dayjs().format("YYYY-MM")
 
 const QUALITY_BUCKETS: QualityBucket[] = ["good", "moderate", "poor"]
 

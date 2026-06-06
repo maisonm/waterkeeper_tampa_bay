@@ -63,9 +63,11 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Tampa Bay Water Quality API", lifespan=lifespan)
 
+_LOCAL_ORIGIN = "http://localhost:5173"
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("ALLOWED_ORIGIN", "http://localhost:5173")],
+    allow_origins=[os.getenv("DEPLOYED_ORIGIN", _LOCAL_ORIGIN)],
     allow_methods=["GET"],
     allow_headers=["*"],
 )

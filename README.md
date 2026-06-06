@@ -46,7 +46,7 @@ Sample data is sourced from a Google Sheet maintained by Tampa Bay Waterkeeper a
 | `DB_HOST` | Database host (default: `localhost`) |
 | `SPREADSHEET_ID` | Google Sheets spreadsheet ID |
 | `SHEET_GID` | Target sheet GID within the spreadsheet |
-| `ALLOWED_ORIGIN` | Frontend origin for CORS (default: `http://localhost:5173`) |
+| `DEPLOYED_ORIGIN` | Frontend origin for CORS (default: `http://localhost:5173`) |
 
 ### Frontend
 

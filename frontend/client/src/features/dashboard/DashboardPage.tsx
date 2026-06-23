@@ -22,13 +22,13 @@ const DashboardPage = () => (
       </section>
 
       <div className="flex min-h-0 flex-1 flex-col gap-4 p-8">
-        <div className="grid h-[50vh] min-h-[16rem] shrink-0 grid-cols-[1fr_2fr] gap-4">
-          <div className="h-full min-h-0">
+        <div className="grid shrink-0 grid-cols-1 gap-4 lg:h-[50vh] lg:min-h-[16rem] lg:grid-cols-[1fr_2fr]">
+          <div className="h-[40vh] min-h-[16rem] lg:h-full lg:min-h-0">
             <SectionErrorBoundary sectionName="Map" className="h-full">
               <MapPanel />
             </SectionErrorBoundary>
           </div>
-          <div className="h-full min-h-0">
+          <div className="h-[50vh] min-h-[16rem] lg:h-full lg:min-h-0">
             <SectionErrorBoundary sectionName="Samples table" className="h-full">
               <SamplesTable />
             </SectionErrorBoundary>

@@ -3,8 +3,9 @@ import ChartTile from "./ChartTile"
 import type { ChartKind } from "./types"
 
 const CHART_TILES: { id: string; title: string; chartKind: ChartKind }[] = [
-  { id: "enterococci-line", title: "Enterococci by site (line)", chartKind: "enterococci-by-site" },
-  { id: "enterococci-bar", title: "Enterococci by site (bar)", chartKind: "enterococci-by-site-bar" },
+  { id: "enterococci-line", title: "Enterococci by site", chartKind: "enterococci-by-site" },
+  { id: "enterococci-bar", title: "Enterococci by site", chartKind: "enterococci-by-site-bar" },
+  { id: "precip-enterococci-bar-line", title: "Enterococci vs. Precipitation", chartKind: "enterococci-precip-bar-line"},
   { id: "precip", title: "Precipitation", chartKind: "precipitation" },
 ]
 

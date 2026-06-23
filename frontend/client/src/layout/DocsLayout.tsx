@@ -1,10 +1,14 @@
 import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
 
 export default function DocsLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1 bg-muted">{children}</main>
+      <main className="flex flex-1 flex-col bg-muted">
+        {children}
+        <Footer />
+      </main>
     </div>
   )
 }

@@ -21,12 +21,12 @@ export const routeConfig: AppRouteConfig[] = [
     Layout: DashboardLayout,
     Page: DashboardPage,
   },
-  {
-    path: "/docs",
-    label: "Docs",
-    Layout: DocsLayout,
-    Page: DocsPage,
-  },
+  // {
+  //   path: "/docs",
+  //   label: "Docs",
+  //   Layout: DocsLayout,
+  //   Page: DocsPage,
+  // },
   {
     path: "/about",
     label: "About",
